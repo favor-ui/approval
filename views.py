@@ -111,5 +111,5 @@ def method_not_allowed(error):
         }
     )
 
-if __name__=='__main__':
-    app.run(debug=True)
+# if __name__=='__main__':
+#     app.run(debug=True)
