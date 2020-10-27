@@ -23,4 +23,4 @@ def cur_time_and_date():
 
 
 
-from app import wardcode
+from App import wardcode

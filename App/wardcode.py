@@ -1,5 +1,5 @@
 from flask import jsonify, request, abort
-from app import app, mongo, cur_time_and_date
+from App import app, mongo, cur_time_and_date
 import id
 
 
