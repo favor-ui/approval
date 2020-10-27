@@ -1,17 +1,17 @@
 from flask import Flask
-from config import Config
-from flask_pymongo import PyMongo
+# from config import Config
+# from flask_pymongo import PyMongo
 from datetime import datetime, date
-from functools import wraps
+# from functools import wraps
 
 
 app = Flask(__name__)
 
 
 
-app.config.from_object(Config)
+# app.config.from_object(Config)
 
-mongo = PyMongo(app)
+# mongo = PyMongo(app)
 
 
 def cur_time_and_date():

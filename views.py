@@ -1,8 +1,16 @@
 from flask import Flask, jsonify, request, abort
 from app import init, id
-
+from flask_pymongo import PyMongo
+from config import Config
+from functools import wraps
 
 app = Flask(__name__)
+
+
+app.config.from_object(Config)
+
+mongo = PyMongo(app)
+
 
 @app.route('/')
 def index():
@@ -13,39 +21,38 @@ def index():
 
 @app.route('/enrollees', methods=['GET'])
 def get_enrollees():
-    try:
-        mongo_data = mongo.db.Enrollment
-        output = []
-        for q in mongo_data.find():
-            
-            output.append(q)
-        
-        return jsonify({"result": output})
-    except Exception:
-        return jsonify({"Message":"Something went wrong Please check"})
+    # try:
+    mongo_data = mongo.db.enrollee
+    output = []
+    for q in mongo_data.find({}):
+        output.append({"name":q["name"]})
+    
+    return jsonify({"result": output})
+    # except Exception:
+    #     return jsonify({"Message":"Something went wrong Please check"})
 
 @app.route('/enrollee', methods=['GET'])
 def get_one_enrollee():
-    try:
-        mongo_data = mongo.db.Enrollment
-        request_data = request.get_json()
-        name1 = request_data['name']
-        name2 = "_".join(name1.split())
-        name = name2.lower()
-        
-        if not name:
-            return jsonify({"Error":"Field can not be blank", "status":0})
-        
-        q = mongo_data.find_one({"Name":name})
+    # try:
+    mongo_data = mongo.db.enrollee
+    request_data = request.get_json()
+    name1 = request_data['name']
+    name2 = "_".join(name1.split())
+    name = name2.lower()
+    
+    if not name:
+        return jsonify({"Error":"Field can not be blank", "status":0})
+    
+    q = mongo_data.find_one({"Name":name})
 
-        if q:
-            output = {"Enrollee":q["name"]}
-        else:
-            output = "No results"
-        
-        return jsonify({"result": output})
-    except Exception:
-        abort(500)
+    if q:
+        output = {"Enrollee":q["name"]}
+    else:
+        output = "No results"
+    
+    return jsonify({"result": output})
+    # except Exception:
+    #     abort(500)
 
 
 
