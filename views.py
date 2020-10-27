@@ -93,10 +93,10 @@ def get_one_enrollon():
     if not name:
         return jsonify({"Error":"Field can not be blank", "status":0})
     
-    q = mongo_data.find_one({"Name":name})
+    q = mongo_data.find_one({"name":name})
 
     if q:
-        output = {"Enrollee":q["name"]}
+        output = {"name":q["name"]}
     else:
         output = "No results"
     
@@ -119,7 +119,7 @@ def get_one_enrollof():
     q = mongo_data.find_one({"Name":name})
 
     if q:
-        output = {"Enrollee":q["name"]}
+        output = {"Name":q["name"]}
     else:
         output = "No results"
     
