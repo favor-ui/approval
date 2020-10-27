@@ -15,7 +15,7 @@ wardcord.append(l)
 
 
 for i in range(11111, 99999):
-    #Generate a 5 digit random numbers between 111 and 999
+    #Generate a 5 digit random numbers between 11111 and 99999
     p = random.randint(11111, 99999)
     P = str(p)
 

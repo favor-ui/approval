@@ -10,8 +10,8 @@ def index():
 
 
 
-@app.route('/symptoms', methods=['GET'])
-def get_symptoms():
+@app.route('/enrollees', methods=['GET'])
+def get_enrollees():
     try:
         mongo_data = mongo.db.Enrollment
         output = []
