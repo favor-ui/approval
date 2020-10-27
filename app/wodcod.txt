@@ -22,3 +22,69 @@ def update_tags(ref, new_tag):
 
 def update_tags(ref, new_tag):
     coll.update_one({'ref': ref}, {'$push': {'tags': new_tag}}, upsert = True)
+
+
+
+# for Abi's DB GS
+
+"name": q["name"],
+"gender" : q["gender"],
+"lga" : q["lga"],
+"phone_number" : q["phone_number"],
+"genotype" : q["genotype"],
+"blood_group" : q["blood_group"],
+"ward" : q["ward"],
+"id" : q["id"],
+"dob" : q["dob"],
+"occupation" : q["occupation"],
+"next_of_kin" : q["next_of_kin"],
+"nok_contact" : q["nok_contact"]
+
+
+
+"_id" : q["_id],
+"Submission ID" : q["Submission ID"],
+"Name" : q["Name"],
+"Gender": q["Gender"],
+"Marital Status" : q["Marital Status"],
+"Date of Birth" : q["Date of Birth"],
+"Phone Number" : q["Phone"],
+"Email" : q["Email"],
+"Nationality" : q["Nationality"],
+"Occupation" : q["Occupation"],
+"Blood Group" : q["Blood Group"],
+"Genotype" : q["Genotype"],
+"LGA" : q["LGA"],
+"Ward" : q["Ward"],
+"Next of Kin" : q["Next of Kin"],
+"Next of kin Contact" : q["Next of kin Contact"],
+"ID Types" : q["ID Types"],
+"ID Card" : q["ID Card"],
+"Passport" : q["Passport"],
+"Relationship" : q["Relationship"],
+"Timestamp" : q["Timestamp"],
+"Status" : q["Status"],
+
+
+                        "_id" : q["_id"],
+                        "Submission ID : q["Submission ID"],
+                        "Name" : q["Name"],
+                        "Gender": q["Gender"],
+                        "Marital Status" : q["Marital Status"],
+                        "Date of Birth" : q["Date of Birth"],
+                        "Phone Number" : q["Phone Number"],
+                        "Email" : q["Email"],
+                        "Nationality" : q["Nationality"],
+                        "Occupation" : q["Occupation"],
+                        "Blood Group" : q["Blood Group"],
+                        "Genotype" : q["Genotype"],
+                        "LGA" : q["LGA"],
+                        "Ward" : q["Ward"],
+                        "Next of Kin" : q["Next of Kin"],
+                        "Next of kin Contact" : q["Next of kin Contact"],
+                        "ID Types" : q["ID Types"],
+                        # "ID Card":q["ID Card"],
+                        "Passport" : q["Passport"],
+                        "Relationship" : q["Relationship"],
+                        "Timestamp" : q["Timestamp"],
+                        "Status" : q["Status"]
