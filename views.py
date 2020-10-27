@@ -1,7 +1,8 @@
-from flask import jsonify, request, abort
-from app import app, mongo, cur_time_and_date
-import id
+from flask import Flask, jsonify, request, abort
+from app import init, id
 
+
+app = Flask(__name__)
 
 @app.route('/')
 def index():

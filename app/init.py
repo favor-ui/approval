@@ -1,4 +1,4 @@
-
+from flask import Flask
 from config import Config
 from flask_pymongo import PyMongo
 from datetime import datetime, date
@@ -23,4 +23,4 @@ def cur_time_and_date():
 
 
 
-from app import wardcode
+# from app import views
