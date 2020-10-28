@@ -1,8 +1,9 @@
 from flask import Flask, jsonify, request, abort
-from app import init, isid, error
+from app import init, isid
 from flask_pymongo import PyMongo
 from config import Config
 from functools import wraps
+
 
 app = Flask(__name__)
 
@@ -124,7 +125,7 @@ def get_one_enrollof():
     # try:
     mongo_data = mongo.db.enrollments
     request_data = request.get_json()
-    Phone_Number = request_data["Phone Number"]
+    Phone Number = request_data["Phone Number"]
     if len(data["Phone Number"]) != 11 or len(''.join(i for i in data["Phone Number"] if i.isdigit())) != 11:
             return {"status": False, "error": "Phone number must be 11 digits"}, 404
     
@@ -262,3 +263,61 @@ def get_one_enrollof():
 
     
     
+@app.errorhandler(400)
+def bad_request__error(exception):
+    return jsonify(
+        {
+            "Message": "Sorry you entered wrong values kindly check and resend!"
+        },
+        {
+            "status": 400
+        }
+    )
+
+
+@app.errorhandler(401)
+def internal_error(error):
+    return jsonify(
+        {
+            "Message": "Access denied ! please register and login to generate API KEY"
+        },
+        {
+            "status": 401
+        }
+    )
+
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return jsonify(
+        {
+            "Message": "Sorry the page your are looking for is not here kindly go back"
+        },
+        {
+            "status": 404
+        }
+    )
+
+
+@app.errorhandler(405)
+def method_not_allowed(error):
+    return jsonify(
+        {
+            "Message": "Sorry the requested method is not allowed kindly check and resend !"
+        },
+        {
+            "status": 405
+        }
+    )
+
+
+@app.errorhandler(500)
+def method_not_allowed(error):
+    return jsonify(
+        {
+            "Message": "Bad request please check your input and resend !"
+        },
+        {
+            "status": 500
+        }
+    )
