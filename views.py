@@ -125,14 +125,15 @@ def get_one_enrollof():
     # try:
     mongo_data = mongo.db.enrollments
     request_data = request.get_json()
-    Phone Number = request_data["Phone Number"]
-    if len(data["Phone Number"]) != 11 or len(''.join(i for i in data["Phone Number"] if i.isdigit())) != 11:
+    phone_number = request_data["Phone Number"]
+    
+    if len(data["phone_number"]) != 11 or len(''.join(i for i in data["phone_number"] if i.isdigit())) != 11:
             return {"status": False, "error": "Phone number must be 11 digits"}, 404
     
-    if not Phone_Number:
+    if not phone_number:
         return jsonify({"Error":"Field can not be blank", "status":0})
     
-    q = mongo_data.find_one({"Phone Number":Phone_Number})
+    q = mongo_data.find_one({"Phone Number":phone_number})
 
     if q:
         output = {  # "_id" : q["_id"],
