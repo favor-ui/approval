@@ -3,6 +3,21 @@ from app import init, isid
 from flask_pymongo import PyMongo
 from config import Config
 from functools import wraps
+from bson.json_util import loads, dumps
+
+
+
+
+# from bson import ObjectId
+# import json
+
+# class JSONEncoder(json.JSONEncoder):
+#     def default(self, o):
+#         if isinstance(o, ObjectId):
+#             return str(o)
+#         return json.JSONEncoder.default(self, o)
+
+# res = json.dumps(DBResultMessage, cls=JSONEncoder)
 
 
 app = Flask(__name__)
@@ -47,15 +62,18 @@ def get_enrollson():
 
 
 
+# from bson.json_util import loads, dumps
+# record = db.movies.find_one()
+# json_str = dumps(record)
+# record2 = loads(json_str)
+
+
 @app.route('/enrollsof', methods=['GET'])
 def get_enrollsof():
     # try:
     mongo_data = mongo.db.enrollments
     mongo_data_1 = mongo.db.approved
-    output = []
-    for q in mongo_data.find({}):
-        output.append({
-        # "_id" : q["_id"],
+    record = mongo_data.find({"_id" : q["_id"],
                         "Submission ID": q["Submission ID"],
                         "Name" : q["Name"],
                         "Gender": q["Gender"],
@@ -76,13 +94,46 @@ def get_enrollsof():
                         "Passport" : q["Passport"],
                         "Relationship" : q["Relationship"],
                         "Timestamp" : q["Timestamp"],
-                        "Status" : q["Status"]
-                    })
+                        "Status" : q["Status"]})
+    json_str = dumps(record)
+    record2 = loads(json_str)
+
+
+
+
+    
+    # output = []
+    # for q in mongo_data.find({}):
+    #     output.append({"_id" : q["_id"],
+    #                     "Submission ID": q["Submission ID"],
+    #                     "Name" : q["Name"],
+    #                     "Gender": q["Gender"],
+    #                     "Marital Status" : q["Marital Status"],
+    #                     "Date of Birth" : q["Date of Birth"],
+    #                     "Phone Number" : q["Phone Number"],
+    #                     "Email" : q["Email"],
+    #                     "Nationality" : q["Nationality"],
+    #                     "Occupation" : q["Occupation"],
+    #                     "Blood Group" : q["Blood Group"],
+    #                     "Genotype" : q["Genotype"],
+    #                     "LGA" : q["LGA"],
+    #                     "Ward" : q["Ward"],
+    #                     "Next of Kin" : q["Next of Kin"],
+    #                     "Next of kin Contact" : q["Next of kin Contact"],
+    #                     "ID Types" : q["ID Types"],
+    #                     " ID Card":q[" ID Card"],
+    #                     "Passport" : q["Passport"],
+    #                     "Relationship" : q["Relationship"],
+    #                     "Timestamp" : q["Timestamp"],
+    #                     "Status" : q["Status"]
+    # #                 })
+        
         # if q:
         #     return jsonify({"message":"All ready exist "})
         # else:
         #     mongo_data_1.insert(output)
-    return jsonify({"result": output})
+    return record2
+    # return jsonify({"result": record2})
     # except Exception:
     #     return jsonify({"Message":"Something went wrong Please check"})
 
@@ -125,7 +176,7 @@ def get_one_enrollof():
     # try:
     mongo_data = mongo.db.enrollments
     request_data = request.get_json()
-    phone_number = request_data["phone_number"]
+    phone_number = request_data["phone_"]
     
     if len(phone_number) != 11 or len(''.join(i for i in phone_number if i.isdigit())) != 11:
             return {"status": False, "error": "Phone number must be 11 digits"}, 404
@@ -136,7 +187,7 @@ def get_one_enrollof():
     q = mongo_data.find_one({"Phone Number":phone_number})
 
     if q:
-        output = {
+        output = { "_id" : q["_id"],
                         "Submission ID": q["Submission ID"],
                         "Name" : q["Name"],
                         "Gender": q["Gender"],
