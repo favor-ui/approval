@@ -446,7 +446,9 @@ class Get_Approved(Resource):
                             "Passport" : q["Passport"],
                             "Relationship" : q["Relationship"],
                             "Timestamp" : q["Timestamp"],
-                            "Status" : q["Status"]
+                            "Status" : q["Status"],
+                            "ENIR ID" : q["ENIR ID"],
+                            "Plan" : q["Plan"]
                             })
 
         return jsonify({"result": output})
