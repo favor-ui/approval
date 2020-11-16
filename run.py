@@ -1,8 +1,7 @@
-from views import *
-# from test import *
-# from flask import Flask
 
-# app = Flask(__name__)
+from reviewed import *
+
+
 
 
 if __name__ == '__main__':

@@ -14,12 +14,12 @@ app = Flask(__name__)
 # mongo = PyMongo(app)
 
 
-def cur_time_and_date():
-    now = datetime.utcnow()
-    today = date.today()
-    d2 = today.strftime("%B %d, %Y")
-    tm = now.strftime("%H:%M:%S")
-    return (d2 +' '+'at'+' '+tm)
+# def cur_time_and_date():
+#     now = datetime.utcnow()
+#     today = date.today()
+#     d2 = today.strftime("%B %d, %Y")
+#     tm = now.strftime("%H:%M:%S")
+#     return (d2 +' '+'at'+' '+tm)
 
 
 
