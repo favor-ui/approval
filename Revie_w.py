@@ -9,7 +9,7 @@ import requests, json, uuid
 from functools import wraps
 import lgs
 from config import Config
-
+import pandas as pd
 
 
 app = Flask(__name__)
@@ -49,42 +49,42 @@ def sms(message, phone_number):
 
 time = cur_time_and_date
 
-
+# Base URL
 @app.route('/')
 def index():
-    return jsonify ({"message":"test"})
+    return {"message":"test"}
 
 
+
+# Routh for backup
 @app.route('/db_backup', methods=['GET'])
 
-def get_enrollsof():
+def backup():
     mongo_data = mongo.db.enrollments
     mongo_data_1 = mongo.db.Approved
     mongo_data_2 = mongo.db.Backup
 
     pipeline = [ {"$match": {}}, 
-        {"$out": "Approved"},]
+        {"$out": "Not_Approved"},]
     
     mongo_data.aggregate(pipeline)
         
-    # pipeline_ = [ {"$match": {}}, 
-    #             {"$out": "Backup"},]
-    # mongo_data.aggregate(pipeline_)
+    pipeline_ = [ {"$match": {}}, 
+                {"$out": "Backup"},]
+    mongo_data.aggregate(pipeline_)
 
-    # source = mongo_data
+    source = mongo_data
 
-    # source.remove({})   
+    source.remove({})   
     
-    return jsonify({"result": "success"})
-
+    return {"result": "success"}
 
 class Get_all_of(Resource):
 
     # @require_appkey
     def get(self):
-        mongo_data = mongo.db.enrollments
         
-        mongo_data_1 = mongo.db.Approved
+        mongo_data_1 = mongo.db.Not_Approved
         
         output = []
         for q in mongo_data_1.find({}):
@@ -107,39 +107,35 @@ class Get_all_of(Resource):
                             "ID Types" : q["ID Types"],
                             "ID Card":q["ID Card"],
                             "Passport" : q["Passport"],
-                            "Relationship" : q["Relationship"],
+                            "Allergies" : q["Allergies"],
                             "Timestamp" : q["Timestamp"],
                             "Status" : q["Status"]
                         })
-            # if q:
-            #     return jsonify({"message":"All ready exist "})
-            # else:
-            #     mongo_data_1.insert(output)
-        return jsonify({"result": output})
+        return {"result": output}
 
 
-api.add_resource(Get_all_of, '/enrollsof')
+api.add_resource(Get_all_of, '/all/enrollments')
 
 class Get_all_count(Resource):
     
     # @require_appkey
     def get(self):
         
-        mongo_data_1 = mongo.db.Approved
+        mongo_data_1 = mongo.db.Not_Approved
         
         output = mongo_data_1.count()
 
-        return jsonify({"result": output})
+        return {"result": output}
 
 
-api.add_resource(Get_all_count, '/_count')
+api.add_resource(Get_all_count, '/all/count')
 
 class Get_one_of(Resource):
     
     # @require_appkey
     def get(self):
-        mongo_data = mongo.db.enrollments
-        mongo_data_1 = mongo.db.Approved
+
+        mongo_data_1 = mongo.db.Not_Approved
         request_data = request.get_json()
         phone_number = request_data["phone_number"]
         
@@ -168,79 +164,16 @@ class Get_one_of(Resource):
                             "ID Types" : q["ID Types"],
                             "ID Card":q["ID Card"],
                             "Passport" : q["Passport"],
-                            "Relationship" : q["Relationship"],
+                            "Allergies" : q["Allergies"],
                             "Timestamp" : q["Timestamp"],
                             "Status" : q["Status"]}
         else:
             output = "No results"
         
-        return jsonify({"result": output})
+        return {"result": output}
 
-api.add_resource(Get_one_of, '/enrollof')
+api.add_resource(Get_one_of, '/one/enrollee')
 
-
-
-class Get_one_on(Resource):
-
-    # @require_appkey
-    def get(self):
-        mongo_data = mongo.db.GS
-        request_data = request.get_json()
-        phone_number = request_data["phone_number"]
-        if len(phone_number) != 11 or len(''.join(i for i in phone_number if i.isdigit())) != 11:
-                return {"status": False, "error": "Phone number must be 11 digits"}, 404
-        
-        if not phone_number:
-            return jsonify({"Error":"Field can not be blank", "status":0})
-        
-        q = mongo_data.find_one({"phone_number":phone_number})
-
-        if q:
-            output = {"name": q["name"],
-                            "gender" : q["gender"],
-                            "lga" : q["lga"],
-                            "phone_number" : q["phone_number"],
-                            "genotype" : q["genotype"],
-                            "blood_group" : q["blood_group"],
-                            "ward" : q["ward"],
-                            "id" : q["id"],
-                            "dob" : q["dob"],
-                            "occupation" : q["occupation"],
-                            "next_of_kin" : q["next_of_kin"],
-                            "nok_contact" : q["nok_contact"]}
-        else:
-            output = "No results"
-        
-        return jsonify({"result": output})
-
-
-api.add_resource(Get_one_on, '/enrollon')
-
-
-class Get_all_on(Resource):
-    # @require_appkey
-    def get(self):
-        mongo_data = mongo.db.GS
-        output = []
-        for q in mongo_data.find({}):
-            output.append({"name": q["name"],
-                            "gender" : q["gender"],
-                            "lga" : q["lga"],
-                            "phone_number" : q["phone_number"],
-                            "genotype" : q["genotype"],
-                            "blood_group" : q["blood_group"],
-                            "ward" : q["ward"],
-                            "id" : q["id"],
-                            "dob" : q["dob"],
-                            "occupation" : q["occupation"],
-                            "next_of_kin" : q["next_of_kin"],
-                            "nok_contact" : q["nok_contact"]
-                        })
-        
-        return jsonify({"result": output})
-
-
-api.add_resource(Get_all_on, '/enrollson')
 
 
 class Approved(Resource):
@@ -285,9 +218,10 @@ class Approved(Resource):
 
     def put(self):
         
-        mongo_data_1 = mongo.db.Approved
+        mongo_data = mongo.db.Approved
 
-        
+        mongo_data_1 = mongo.db.Not_Approved
+       
         data = Approved.parser.parse_args()
 
         dob = datetime.strptime(data['Date of Birth'], "%d/%m/%Y")
@@ -387,6 +321,45 @@ class Approved(Resource):
             
             mongo_data_1.find_one_and_update({"Submission ID": sid}, {"$set": {"Status": "Approved", "ENIR ID": ID, "Plan" : plan}} )
 
+            # Insert approved to a collection
+
+            out = {}
+
+            for q in mongo_data_1.find({"Status" : "Approved"}):
+                
+                # pipeline = [ {"$match": {}}, 
+                #         {"$out": "Approved"},]
+            
+                # mongo_data_1.aggregate(pipeline)
+                
+
+                out.append({"_id" : str(q["_id"]),
+                            "Submission ID": q["Submission ID"],
+                            "Name" : q["Name"],
+                            "Gender": q["Gender"],
+                            "Marital Status" : q["Marital Status"],
+                            "Date of Birth" : q["Date of Birth"],
+                            "Phone Number" : q["Phone Number"],
+                            "Email" : q["Email"],
+                            "Nationality" : q["Nationality"],
+                            "Occupation" : q["Occupation"],
+                            "Blood Group" : q["Blood Group"],
+                            "Genotype" : q["Genotype"],
+                            "LGA" : q["LGA"],
+                            "Ward" : q["Ward"],
+                            "Next of Kin" : q["Next of Kin"],
+                            "Next of kin Contact" : q["Next of kin Contact"],
+                            "ID Types" : q["ID Types"],
+                            "ID Card":q["ID Card"],
+                            "Passport" : q["Passport"],
+                            "Allergies" : q["Allergies"],
+                            "Timestamp" : q["Timestamp"],
+                            "Status" : q["Status"]})
+                
+                mongo_data.insert_one(out)
+                
+                return out
+
 
             Suc_cess = "message :Congratulation:Congratulations, we were able to verify your information; Time: %s"%(time)
             
@@ -397,7 +370,150 @@ class Approved(Resource):
             return {"message": "Your ID has been assigned successfully ", "status": True}, 200
 
 
-api.add_resource(Approved, '/approve')
+api.add_resource(Approved, '/approval/enrollment/id')
+
+
+class Approve_many(Resource):
+
+    parser = reqparse.RequestParser(bundle_errors=True)
+    parser.add_argument("Submission ID", type=str, required=True, help="this field cannot be left blank")
+    parser.add_argument("LGA", type=str, required=True, help="this field cannot be left blank")
+    parser.add_argument("Ward", type=str, required=True, help="this field cannot be left blank")
+    parser.add_argument("Gender", type=str, required=True, help="this field cannot be left blank")
+    parser.add_argument("Occupation", type=str, required=True, help="this field cannot be left blank")
+    parser.add_argument("Phone Number", type=str, required=True, help="this field cannot be left blank")
+    parser.add_argument("Date of Birth", type=str, required=True, help="this field cannot be left blank")
+    
+    def put(self):
+        
+        mongo_data = mongo.db.Approved
+
+        mongo_data_1 = mongo.db.Not_Approved
+
+
+        data = Approve_many.parser.parse_args()
+
+        Sid = data["Submission ID"].split(",")
+        
+        Lga = data["LGA"].split(",")
+        
+        Wod = data["Ward"].split(",")
+        
+        Gen = data["Gender"].split(",")
+        
+        occ = data["Occupation"].split(",")
+
+        phon = data["Phone Number"].split(",")
+
+        DOB = data["Date of Birth"].split(",")
+        
+
+       
+
+    # convert data to a dateframe and back to dictionary
+        df = pd.DataFrame({"Submission ID":Sid, "LGA" : Lga, "Ward" : Wod, "Gender" : Gen, "Occupation": occ, "Phone Number" : phon, "Date of Birth" : DOB})
+        
+        all_records = df.to_dict("records")
+        
+        # print(all_records)
+        see = {}
+        for x in range(len(all_records)):
+
+            sid = all_records[x]["Submission ID"].strip()
+
+            Occ = all_records[x]["Occupation"].strip()
+
+            Dob = all_records[x]["Date of Birth"].strip()
+            
+            # DOB = 
+
+            dob = datetime.strptime(Dob.strip(), "%d/%m/%Y")
+
+            Today = date.today()
+
+            time_difference = relativedelta(Today, dob)
+            
+            diff = time_difference.years
+
+
+            if diff <= 5:
+                plan = "Equity"
+            
+            elif diff >= 60:
+                plan = "Equity"
+            
+            elif Occ == "Retired":
+                plan = "Equity"
+            
+            else:
+                plan = "Nill"
+
+
+            p = str(uuid.uuid4().int)[:6]
+
+            sex = {"Male": "1", "Female" : "2"}
+            
+            lga = all_records[x]["LGA"].strip()
+
+            gender = all_records[x]["Gender"].strip()
+            
+            ward = all_records[x]["Ward"].strip()
+
+            ward_no = lgs.LGAs[lga][ward]
+
+            ID = p + ward_no + sex[gender]
+
+
+            
+
+            # see[x] = [{"Submission ID": sid, "Date of Birth" : str(dob)}, {"$set": {"Status" : "Approved", "Plan": plan, "ENRID": ID }}]
+            mongo_data_1.find_one_and_update({"Submission ID": sid }, {"$set": {"Status" : "Approved", "Plan": plan, "ENRID": ID }})
+
+            out = {}
+
+            for q in mongo_data_1.find({"Status" : "Approved"}):
+                
+                out.append({"_id" : str(q["_id"]),
+                            "Submission ID": q["Submission ID"],
+                            "Name" : q["Name"],
+                            "Gender": q["Gender"],
+                            "Marital Status" : q["Marital Status"],
+                            "Date of Birth" : q["Date of Birth"],
+                            "Phone Number" : q["Phone Number"],
+                            "Email" : q["Email"],
+                            "Nationality" : q["Nationality"],
+                            "Occupation" : q["Occupation"],
+                            "Blood Group" : q["Blood Group"],
+                            "Genotype" : q["Genotype"],
+                            "LGA" : q["LGA"],
+                            "Ward" : q["Ward"],
+                            "Next of Kin" : q["Next of Kin"],
+                            "Next of kin Contact" : q["Next of kin Contact"],
+                            "ID Types" : q["ID Types"],
+                            "ID Card":q["ID Card"],
+                            "Passport" : q["Passport"],
+                            "Allergies" : q["Allergies"],
+                            "Timestamp" : q["Timestamp"],
+                            "Status" : q["Status"]})
+                
+                mongo_data.insert_one(out)
+                
+                # return {"message" : "Success"}
+
+
+                Suc_cess = "message :Congratulation:Congratulations, we were able to verify your information; Time: %s"%(time)
+                
+                enrollee_number = data["Phone Number"]
+
+                # sms(message=Suc_cess, phone_number=enrollee_number)
+
+                return {"message": "Your ID has been assigned successfully ", "status": True}, 200
+        
+
+api.add_resource(Approve_many, '/approve/enrollments')
+
+
+
 
 class Get_Approved_count(Resource):  
     # @require_appkey
@@ -408,7 +524,7 @@ class Get_Approved_count(Resource):
         
         output = mongo_data_1.count({"Status":"Approved"})
 
-        return jsonify({"result": output})
+        return {"result": output}
 
 
 api.add_resource(Get_Approved_count, '/count_Approved')
@@ -444,7 +560,7 @@ class Get_Approved(Resource):
                             "ID Types" : q["ID Types"],
                             "ID Card":q["ID Card"],
                             "Passport" : q["Passport"],
-                            "Relationship" : q["Relationship"],
+                            "Allergies" : q["Allergies"],
                             "Timestamp" : q["Timestamp"],
                             "Status" : q["Status"],
                             "ENIR ID" : q["ENIR ID"],
@@ -458,12 +574,12 @@ class Get_Approved(Resource):
 api.add_resource(Get_Approved, '/get_approved')
 
 
-class Not_Approved(Resource):
+class Query(Resource):
     
     # @require_appkey
     def put(self):
         
-        mongo_data_1 = mongo.db.Approved
+        mongo_data_1 = mongo.db.Not_Approved
         
         parser = reqparse.RequestParser()
 
@@ -505,7 +621,51 @@ class Not_Approved(Resource):
             return 'not_found'
 
 
-api.add_resource(Not_Approved,'/not_approved')
+api.add_resource(Query,'/query')
+
+
+
+class Query_all(Resource):
+
+    parser = reqparse.RequestParser(bundle_errors=True)
+    parser.add_argument("Submission ID", type=str, required=True, help="this field cannot be left blank")
+    parser.add_argument("Phone Number", type=str, required=True, help="this field cannot be left blank")
+       
+    def put(self):
+
+        mongo_data_1 = mongo.db.Not_Approved
+
+
+        data = Approve_many.parser.parse_args()
+
+        Sid = data["Submission ID"].split(",")
+
+        phon = data["Phone Number"].split(",")
+        
+
+       
+
+    # convert data to a dateframe and back to dictionary
+        df = pd.DataFrame({"Submission ID":Sid, "Phone Number" : phon})
+        
+        all_records = df.to_dict("records")
+        
+        # print(all_records)
+        see = {}
+        for x in range(len(all_records)):
+
+            sid = all_records[x]["Submission ID"].strip()
+
+            phone = all_records[x]["Phone"].strip()
+
+            
+
+            see[x] = [{"Submission ID": sid}, {"$set": {"Status" : "Not_Approved" }}]
+            mongo_data_1.update_many({"Submission ID": sid }, {"$set": {"Status" : "Not_Approve"}})
+        return {}
+        
+
+api.add_resource(Query_all, '/query_all')
 
 
 class Get_notApproved_count(Resource):  
@@ -515,7 +675,7 @@ class Get_notApproved_count(Resource):
         
         output = mongo_data_1.count({"Status":"Not_Approved"})
 
-        return jsonify({"result": output})
+        return {"result": output}
 
 
 api.add_resource(Get_notApproved_count, '/count_notApproved')
@@ -523,7 +683,7 @@ api.add_resource(Get_notApproved_count, '/count_notApproved')
 class Get_notApproved(Resource):  
     # @require_appkey
     def get(self):
-        mongo_data_1 = mongo.db.Approved
+        mongo_data_1 = mongo.db.Not_Approved
         
         output = []
         
@@ -549,13 +709,13 @@ class Get_notApproved(Resource):
                             "ID Types" : q["ID Types"],
                             "ID Card":q["ID Card"],
                             "Passport" : q["Passport"],
-                            "Relationship" : q["Relationship"],
+                            "Allergies" : q["Allergies"],
                             "Timestamp" : q["Timestamp"],
                             "Status" : q["Status"]
                          })
                         
 
-        return jsonify({"result": output})
+        return {"result": output}
 
 
 
@@ -564,7 +724,7 @@ api.add_resource(Get_notApproved, '/get_not_Approved')
 class Get_pending(Resource):  
     # @require_appkey
     def get(self):
-        mongo_data_1 = mongo.db.Approved
+        mongo_data_1 = mongo.db.Not_Approved
         
         output = []
         
@@ -590,13 +750,13 @@ class Get_pending(Resource):
                             "ID Types" : q["ID Types"],
                             "ID Card":q["ID Card"],
                             "Passport" : q["Passport"],
-                            "Relationship" : q["Relationship"],
+                            "Allergies" : q["Allergies"],
                             "Timestamp" : q["Timestamp"],
                             "Status" : q["Status"]
                          })
                         
 
-        return jsonify({"result": output})
+        return {"result": output}
 
 
 
@@ -605,29 +765,14 @@ api.add_resource(Get_pending, '/get_pending')
 class Get_pending_count(Resource):  
     # @require_appkey
     def get(self):
-        mongo_data_1 = mongo.db.Approved
+        mongo_data_1 = mongo.db.Not_Approved
         
         output = mongo_data_1.count({"Status":"Pending"})
 
-        return jsonify({"result": output})
+        return {"result": output}
 
 
 api.add_resource(Get_pending_count, '/count_pending')
-
-
-
-
-@app.route('/updatemany', methods = ['PUT'])
-
-def updatemany():
-    mongo_data_1 = mongo.db.Approved
-    
-    for i in mongo_data_1.find():
-
-        mongo_data_1.update_many({}, 
-        {"$set":{"Status" : "Pending"}})
-    return jsonify({"msg":"Success", "status": 200})
-
 
 
 @app.errorhandler(400)
