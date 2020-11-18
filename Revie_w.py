@@ -530,48 +530,36 @@ class Get_Approved_count(Resource):
 api.add_resource(Get_Approved_count, '/count_Approved')
 
 
-class Get_Approved(Resource):  
+class Get_unprinted(Resource):  
     # @require_appkey
     def get(self):
 
         mongo_data = mongo.db.Approved
+
+        parser = reqparse.RequestParser(bundle_errors= True)
+
+        parser.add_argument("limit", type=int)
+
+        parser.add_argument("skip", type=int)
+
+        data = parser.parse_args()
         
+        records = mongo_data.find({"Status" : "Approved"}).limit(data["limit"]).skip(data["skip"])
+
         output = []
         
-        
-        for q in mongo_data.find({"Status":"Approved"}):
-            
-            output.append({
-                            "Submission ID": q["Submission ID"],
-                            "Name" : q["Name"],
-                            "Gender": q["Gender"],
-                            "Marital Status" : q["Marital Status"],
-                            "Date of Birth" : q["Date of Birth"],
-                            "Phone Number" : q["Phone Number"],
-                            "Email" : q["Email"],
-                            "Nationality" : q["Nationality"],
-                            "Occupation" : q["Occupation"],
-                            "Blood Group" : q["Blood Group"],
-                            "Genotype" : q["Genotype"],
-                            "LGA" : q["LGA"],
-                            "Ward" : q["Ward"],
-                            "Next of Kin" : q["Next of Kin"],
-                            "Next of kin Contact" : q["Next of kin Contact"],
-                            "ID Types" : q["ID Types"],
-                            "ID Card":q["ID Card"],
-                            "Passport" : q["Passport"],
-                            "Allergies" : q["Allergies"],
-                            "Timestamp" : q["Timestamp"],
-                            "Status" : q["Status"],
-                            "ENIR ID" : q["ENIR ID"],
-                            "Plan" : q["Plan"]
-                            })
+        for record in records:
 
-        return jsonify({"result": output})
+            record["_id"] = str(record["_id"])
 
+            output.append(record)
 
+        if len(output) != 0:
+            return jsonify(status = True, data =output)
+        else:
+             return jsonify(status = False, message = "No records found")
 
-api.add_resource(Get_Approved, '/get_approved')
+api.add_resource(Get_unprinted, '/all/unprinted')
 
 
 class Query(Resource):
@@ -719,7 +707,7 @@ class Get_notApproved(Resource):
 
 
 
-api.add_resource(Get_notApproved, '/get_not_Approved')
+api.add_resource(Get_notApproved, '/')
 
 class Get_pending(Resource):  
     # @require_appkey
