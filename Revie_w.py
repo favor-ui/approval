@@ -60,22 +60,22 @@ def index():
 @app.route('/db_backup', methods=['GET'])
 
 def backup():
-    mongo_data = mongo.db.enrollments
-    mongo_data_1 = mongo.db.Approved
-    mongo_data_2 = mongo.db.Backup
+    # mongo_data = mongo.db.enrollments
+    # mongo_data_1 = mongo.db.Approved
+    # mongo_data_2 = mongo.db.Backup
 
-    pipeline = [ {"$match": {}}, 
-        {"$out": "Not_Approved"},]
+    # pipeline = [ {"$match": {}}, 
+    #     {"$out": "Not_Approved"},]
     
-    mongo_data.aggregate(pipeline)
+    # mongo_data_2.aggregate(pipeline)
         
-    pipeline_ = [ {"$match": {}}, 
-                {"$out": "Backup"},]
-    mongo_data.aggregate(pipeline_)
+    # pipeline_ = [ {"$match": {}}, 
+    #             {"$out": "Backup"},]
+    # mongo_data.aggregate(pipeline_)
 
-    source = mongo_data
+    # source = mongo_data
 
-    source.remove({})   
+    # source.remove({})   
     
     return {"result": "success"}
 
@@ -88,29 +88,12 @@ class Get_all_of(Resource):
         
         output = []
         for q in mongo_data_1.find({}):
-            output.append({
-                            "Submission ID": q["Submission ID"],
-                            "Name" : q["Name"],
-                            "Gender": q["Gender"],
-                            "Marital Status" : q["Marital Status"],
-                            "Date of Birth" : q["Date of Birth"],
-                            "Phone Number" : q["Phone Number"],
-                            "Email" : q["Email"],
-                            "Nationality" : q["Nationality"],
-                            "Occupation" : q["Occupation"],
-                            "Blood Group" : q["Blood Group"],
-                            "Genotype" : q["Genotype"],
-                            "LGA" : q["LGA"],
-                            "Ward" : q["Ward"],
-                            "Next of Kin" : q["Next of Kin"],
-                            "Next of kin Contact" : q["Next of kin Contact"],
-                            "ID Types" : q["ID Types"],
-                            "ID Card":q["ID Card"],
-                            "Passport" : q["Passport"],
-                            "Allergies" : q["Allergies"],
-                            "Timestamp" : q["Timestamp"],
-                            "Status" : q["Status"]
-                        })
+            
+            q["_id"] = str(q["_id"])
+
+
+            output.append(q)
+
         return {"result": output}
 
 
@@ -144,29 +127,12 @@ class Get_one_of(Resource):
         
         q = mongo_data_1.find_one({"Phone Number":phone_number})
 
+        output = []
+
         if q:
-            output = {
-                            "Submission ID": q["Submission ID"],
-                            "Name" : q["Name"],
-                            "Gender": q["Gender"],
-                            "Marital Status" : q["Marital Status"],
-                            "Date of Birth" : q["Date of Birth"],
-                            "Phone Number" : q["Phone Number"],
-                            "Email" : q["Email"],
-                            "Nationality" : q["Nationality"],
-                            "Occupation" : q["Occupation"],
-                            "Blood Group" : q["Blood Group"],
-                            "Genotype" : q["Genotype"],
-                            "LGA" : q["LGA"],
-                            "Ward" : q["Ward"],
-                            "Next of Kin" : q["Next of Kin"],
-                            "Next of kin Contact" : q["Next of kin Contact"],
-                            "ID Types" : q["ID Types"],
-                            "ID Card":q["ID Card"],
-                            "Passport" : q["Passport"],
-                            "Allergies" : q["Allergies"],
-                            "Timestamp" : q["Timestamp"],
-                            "Status" : q["Status"]}
+            q["_id"] = str(q["_id"])
+            
+            output.append(q)
         else:
             output = "No results"
         
@@ -319,51 +285,16 @@ class Approved(Resource):
             ID = p + ward_no + sex[gender]
 
             
-            mongo_data_1.find_one_and_update({"Submission ID": sid}, {"$set": {"Status": "Approved", "ENIR ID": ID, "Plan" : plan}} )
-
-            # Insert approved to a collection
-
-            out = {}
-
-            for q in mongo_data_1.find({"Status" : "Approved"}):
+            result = mongo_data_1.find_one_and_update({"Submission ID": sid, "Date of Birth" : data["Date of Birth"] }, {"$set": {"Status" : "Approved", "Plan": plan, "ENRID": ID , "Print Status" : "Nill"}})
+            print(result)
+            result["_id"] = str(result["_id"])
                 
-                # pipeline = [ {"$match": {}}, 
-                #         {"$out": "Approved"},]
+            mongo_data.insert(result)
+
+
+            # Suc_cess = "message :Congratulation, we were able to verify your information; Time: %s"%(time)
             
-                # mongo_data_1.aggregate(pipeline)
-                
-
-                out.append({"_id" : str(q["_id"]),
-                            "Submission ID": q["Submission ID"],
-                            "Name" : q["Name"],
-                            "Gender": q["Gender"],
-                            "Marital Status" : q["Marital Status"],
-                            "Date of Birth" : q["Date of Birth"],
-                            "Phone Number" : q["Phone Number"],
-                            "Email" : q["Email"],
-                            "Nationality" : q["Nationality"],
-                            "Occupation" : q["Occupation"],
-                            "Blood Group" : q["Blood Group"],
-                            "Genotype" : q["Genotype"],
-                            "LGA" : q["LGA"],
-                            "Ward" : q["Ward"],
-                            "Next of Kin" : q["Next of Kin"],
-                            "Next of kin Contact" : q["Next of kin Contact"],
-                            "ID Types" : q["ID Types"],
-                            "ID Card":q["ID Card"],
-                            "Passport" : q["Passport"],
-                            "Allergies" : q["Allergies"],
-                            "Timestamp" : q["Timestamp"],
-                            "Status" : q["Status"]})
-                
-                mongo_data.insert_one(out)
-                
-                return out
-
-
-            Suc_cess = "message :Congratulation:Congratulations, we were able to verify your information; Time: %s"%(time)
-            
-            enrollee_number = data["Phone Number"]
+            # enrollee_number = data["Phone Number"]
 
             # sms(message=Suc_cess, phone_number=enrollee_number)
 
@@ -464,50 +395,19 @@ class Approve_many(Resource):
             ID = p + ward_no + sex[gender]
 
 
+            result = mongo_data_1.find_one_and_update({"Submission ID": sid }, {"$set": {"Status" : "Approved", "Plan": plan, "ENRID": ID , "Print Status" : "Null"}})
+
+            result["_id"] = str(result["_id"])
+                
+            mongo_data.insert(result)
+
+            Suc_cess = "message :Congratulation:Congratulations, we were able to verify your information; Time: %s"%(time)
             
+            enrollee_number = data["Phone Number"]
 
-            # see[x] = [{"Submission ID": sid, "Date of Birth" : str(dob)}, {"$set": {"Status" : "Approved", "Plan": plan, "ENRID": ID }}]
-            mongo_data_1.find_one_and_update({"Submission ID": sid }, {"$set": {"Status" : "Approved", "Plan": plan, "ENRID": ID }})
+            # sms(message=Suc_cess, phone_number=enrollee_number)
 
-            out = {}
-
-            for q in mongo_data_1.find({"Status" : "Approved"}):
-                
-                out.append({"_id" : str(q["_id"]),
-                            "Submission ID": q["Submission ID"],
-                            "Name" : q["Name"],
-                            "Gender": q["Gender"],
-                            "Marital Status" : q["Marital Status"],
-                            "Date of Birth" : q["Date of Birth"],
-                            "Phone Number" : q["Phone Number"],
-                            "Email" : q["Email"],
-                            "Nationality" : q["Nationality"],
-                            "Occupation" : q["Occupation"],
-                            "Blood Group" : q["Blood Group"],
-                            "Genotype" : q["Genotype"],
-                            "LGA" : q["LGA"],
-                            "Ward" : q["Ward"],
-                            "Next of Kin" : q["Next of Kin"],
-                            "Next of kin Contact" : q["Next of kin Contact"],
-                            "ID Types" : q["ID Types"],
-                            "ID Card":q["ID Card"],
-                            "Passport" : q["Passport"],
-                            "Allergies" : q["Allergies"],
-                            "Timestamp" : q["Timestamp"],
-                            "Status" : q["Status"]})
-                
-                mongo_data.insert_one(out)
-                
-                # return {"message" : "Success"}
-
-
-                Suc_cess = "message :Congratulation:Congratulations, we were able to verify your information; Time: %s"%(time)
-                
-                enrollee_number = data["Phone Number"]
-
-                # sms(message=Suc_cess, phone_number=enrollee_number)
-
-                return {"message": "Your ID has been assigned successfully ", "status": True}, 200
+            return {"message": "Your ID has been assigned successfully ", "status": True}, 200
         
 
 api.add_resource(Approve_many, '/approve/enrollments')
@@ -518,9 +418,8 @@ api.add_resource(Approve_many, '/approve/enrollments')
 class Get_Approved_count(Resource):  
     # @require_appkey
     def get(self):
-        # mongo_data= mongo.db.enrollments
+
         mongo_data_1= mongo.db.Approved
-        # output = []
         
         output = mongo_data_1.count({"Status":"Approved"})
 
@@ -562,6 +461,150 @@ class Get_unprinted(Resource):
 api.add_resource(Get_unprinted, '/all/unprinted')
 
 
+
+class Printed(Resource):
+    
+    # @require_appkey
+    def put(self):
+        
+        mongo_data = mongo.db.Approved
+        
+        parser = reqparse.RequestParser()
+
+        parser.add_argument("ENRID",
+                            type=str,
+                            required=True,
+                            help= "This field cannot be left blank")
+
+        data = parser.parse_args()
+
+        
+        if not data["ENRID"]:
+            
+            return {"Error":"Field can not be blank", "status":0}
+       
+        records = mongo_data_1.find({"ENRID": data["ENRID"]})
+        
+        for record in records:
+            
+            if record["Print Status"]["status"] == "Printed":
+
+                return {"message" : "Card Already Printed", "status" : 0}
+
+            else:
+                mongo_data.update_one({"Submission ID": data["Submission ID"]},{"$set": {"Print Status": {"status" : "Printed", "Frequency" : 1}}})
+
+                # Failure = "message :Sorry, we couldn't verify your data; Time: %s" %(time)
+
+                # enrollee_phone = data["Phone Number"]
+
+                # sms(message= Failure, phone_number=enrollee_phone)
+                # return see
+                return {"message": "Card Printed", "status": True}, 200
+
+api.add_resource(Printed,'/print/one')
+
+
+
+class Reprint(Resource):
+    
+    # @require_appkey
+    def put(self):
+        
+        mongo_data = mongo.db.Approved
+        
+        parser = reqparse.RequestParser()
+
+        parser.add_argument("ENRID",
+                            type=str,
+                            required=True,
+                            help= "Submission ID field cannot be left blank")
+
+        data = parser.parse_args()
+
+        
+        if not data["ENRID"]:
+            
+            return {"Error":"Field can not be blank", "status":0}
+       
+        records = mongo_data_1.find({"ENRID": data["ENRID"]})
+        
+        for record in records:
+
+            mongo_data_1.update_one({"ENRID": data["ENRID"]},{"$inc": { "Printed Status.Frequency": 1 }})
+
+            # Failure = "message :Sorry, we couldn't verify your data; Time: %s" %(time)
+
+            # enrollee_phone = data["Phone Number"]
+
+            # sms(message= Failure, phone_number=enrollee_phone)
+
+            return {"message": "Card Printed", "status": True}, 200
+
+        else:
+            return 'not_found'
+
+api.add_resource(Reprint,'/reprint/one')
+
+
+class Print_range(Resource):
+    
+    parser = reqparse.RequestParser(bundle_errors=True)
+    
+    parser.add_argument("ENRID", action = 'append', required=True, help="this field cannot be left blank")
+       
+    def put(self):
+
+        mongo_data = mongo.db.Approved
+
+
+        data = Approve_many.parser.parse_args()
+
+        enrid = data["ENRID"]
+
+    # convert data to a dateframe and back to dictionary
+        df = pd.DataFrame({"Submission ID":enrid})
+        
+        all_records = df.to_dict("records")
+        
+        # print(all_records)
+        see = {}
+        for x in range(len(all_records)):
+
+            Enrid = all_records[x]["ENRID"].strip() 
+
+            see[x] = [{"ENRID": Enrid}, {"$set": {"Print Status": {"status" : "Printed", "Frequency" : 1}}}]
+            
+            mongo_data_1.update_many({"ENRID": Enrid}, {"$set": {"Print Status": {"status" : "Printed", "Frequency" : 1}}})
+        
+        return see
+
+api.add_resource(Print_range, '/print/range')
+
+
+class Get_printed(Resource):  
+    # @require_appkey
+    def get(self):
+        mongo_data = mongo.db.Approved
+        
+        output = []
+        
+        
+        records = mongo_data.find({"Print Status.status":"Printed"})
+
+        for record in records:
+                
+            q["_id"] = str(q["_id"])
+
+            output.append(q)
+
+            return {"result": output}
+
+
+api.add_resource(Get_printed, '/all/printed')
+
+
+
 class Query(Resource):
     
     # @require_appkey
@@ -593,7 +636,11 @@ class Query(Resource):
 
         q = mongo_data_1.find({"Submission ID": data["Submission ID"]})
 
-        if data["Submission ID"]:
+        if not q:
+
+            return "not_found"
+
+        else:
             mongo_data_1.update_many({"Submission ID":data["Submission ID"]},{"$set": {"Status": "Not_Approved"}})
 
             # Failure = "message :Sorry, we couldn't verify your data; Time: %s" %(time)
@@ -602,12 +649,7 @@ class Query(Resource):
 
             # sms(message= Failure, phone_number=enrollee_phone)
 
-            return {"message": "Not Approved", "status": True}, 200
-
-
-        else:
-            return 'not_found'
-
+            return {"message": "Not Approved", "status": True}, 200   
 
 api.add_resource(Query,'/query')
 
@@ -650,8 +692,8 @@ class Query_all(Resource):
 
             see[x] = [{"Submission ID": sid}, {"$set": {"Status" : "Not_Approved" }}]
             mongo_data_1.update_many({"Submission ID": sid }, {"$set": {"Status" : "Not_Approve"}})
-        return {}
         
+        return see    
 
 api.add_resource(Query_all, '/query_all')
 
@@ -676,38 +718,17 @@ class Get_notApproved(Resource):
         output = []
         
         
-        for q in mongo_data_1.find({"Status":"Not_Approved"}) :
-            
-            output.append({
-                            "Submission ID": q["Submission ID"],
-                            "Name" : q["Name"],
-                            "Gender": q["Gender"],
-                            "Marital Status" : q["Marital Status"],
-                            "Date of Birth" : q["Date of Birth"],
-                            "Phone Number" : q["Phone Number"],
-                            "Email" : q["Email"],
-                            "Nationality" : q["Nationality"],
-                            "Occupation" : q["Occupation"],
-                            "Blood Group" : q["Blood Group"],
-                            "Genotype" : q["Genotype"],
-                            "LGA" : q["LGA"],
-                            "Ward" : q["Ward"],
-                            "Next of Kin" : q["Next of Kin"],
-                            "Next of kin Contact" : q["Next of kin Contact"],
-                            "ID Types" : q["ID Types"],
-                            "ID Card":q["ID Card"],
-                            "Passport" : q["Passport"],
-                            "Allergies" : q["Allergies"],
-                            "Timestamp" : q["Timestamp"],
-                            "Status" : q["Status"]
-                         })
-                        
+        for q in mongo_data_1.find({"Status":"Not_Approved"}):
+
+            q["_id"] = str(q["_id"])   
+
+            output.append(q)            
 
         return {"result": output}
 
+api.add_resource(Get_notApproved, '/all/query/enrollments')
 
 
-api.add_resource(Get_notApproved, '/')
 
 class Get_pending(Resource):  
     # @require_appkey
@@ -719,30 +740,9 @@ class Get_pending(Resource):
         
         for q in mongo_data_1.find({"Status":"Pending"}) :
             
-            output.append({
-                            "Submission ID": q["Submission ID"],
-                            "Name" : q["Name"],
-                            "Gender": q["Gender"],
-                            "Marital Status" : q["Marital Status"],
-                            "Date of Birth" : q["Date of Birth"],
-                            "Phone Number" : q["Phone Number"],
-                            "Email" : q["Email"],
-                            "Nationality" : q["Nationality"],
-                            "Occupation" : q["Occupation"],
-                            "Blood Group" : q["Blood Group"],
-                            "Genotype" : q["Genotype"],
-                            "LGA" : q["LGA"],
-                            "Ward" : q["Ward"],
-                            "Next of Kin" : q["Next of Kin"],
-                            "Next of kin Contact" : q["Next of kin Contact"],
-                            "ID Types" : q["ID Types"],
-                            "ID Card":q["ID Card"],
-                            "Passport" : q["Passport"],
-                            "Allergies" : q["Allergies"],
-                            "Timestamp" : q["Timestamp"],
-                            "Status" : q["Status"]
-                         })
-                        
+            q["_id"] = str(q["_id"])
+            
+            output.append(q)
 
         return {"result": output}
 
