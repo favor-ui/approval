@@ -1,10 +1,4 @@
 
-
-LGAs = {"Bassa": Bassa, "Bokkos": Bokkos, "Jos South" : Jos_South, "Kanam": Kanam, "Langtang": Langtang_North,"Shendam" : Shendam, "Barkin Ladi" : Barkin_Ladi, "Riyom" : Riyom, "Kanke" : Kanke, "Pankshin": Pankshin, "Mikang": Mikang, "Jos North": Jos_North, "Wase":Wase, "Jos East":Jos_East, "Mangu": Mangu, "Langtang South":Langtang_South, "Quaanpan":Quaanpan}
-
-
-
-
 Kanam = {"Birbyang":"288","Dengi":"559","Dugub":"890","Gagdi":"115", "Gar/Bagyar":"393", "Garga":"204", "Gidgid":"452", "Gumsher":"922","Gwamlar":"281","Jarmai":"933", "Kanam":"194","Kantana":"573","Kunkyan North":"171", "Kyansar":"648", "Munbutbo":"431","Gyambar":"993", "Jom":"759", "Kyaram":"614", "Namaran":"135",  }
 
 
@@ -24,7 +18,7 @@ Langtang_North = {"Funyallang":"531", "Jat":"580", "Kwallak":"927", "Kwanpe":"83
 
 Barkin_Ladi= {"Gassa":"225","Gindin Akwaiti":"854","Heipang":"767","Kakuruk":"744","Kamang Nafok":"908","Kapwen Ket":"601","Kapwis":"397","Kurrafalls":"518","Lobring":"440","Marit":"148","Mazat":"919","Pomol Chit":"","Rafan":"244","Rakwok":"982","Sho":"511","Tafan A":"855","Tafan B":"653","Takwok":"438","Zabot":"370","Gafat":"455"}
 
-Riyom = {"Riyom":"875","Rahoss":"562","Tse":"747","Sharubutu":"770","Sopp":"139","Kwi":"151""Gura":"947","Danto":"654","Jol":"932","Wereng":"207","Attakar":"574","Tahoss":"272","Kwogo":"589","Fangroi":"612","Shonong":"330","Rim":"643","Bum":"756"}
+Riyom = {"Riyom":"875","Rahoss":"562","Tse":"747","Sharubutu":"770","Sopp":"139","Kwi":"151","Gura":"947","Danto":"654","Jol":"932","Wereng":"207","Attakar":"574","Tahoss":"272","Kwogo":"589","Fangroi":"612","Shonong":"330","Rim":"643","Bum":"756"}
 
 Kanke = {"Ampang A Ward":"184","Ampang B":"122","Amper B":"772","Amper Central":"680","Dawaki":"483","Garram":"697","Gugur":"679","Gungji":"837","Gyangyang":"487","KabwirPada":"995","Kangrit":"409","Kwarip":"563","Langshi":"245","Nemel":"489","Seri":"166","Shiwer":"941","Somji":"170","Tabulung":"344"}
 
@@ -36,17 +30,18 @@ Mikang = {"Baltep":"319","Din":"628","Kiehil":"522","Lalin":"419","Luham":"598",
 
 Jos_North = {"Abba Nashehu":"661","Ahwol":"367","Ali Kazaure":"714","Angwan Rogo/Rimi":"962","Gangare":"604","Garba Daho":" 242","Ibrahim Katsina":"163","Jenta Adamu":"706","Jenta Apata":"205","Jos Jarawa":"251","Kabong":"252","Lamingo":"401","Mazah":"904","Naraguta A":"828","Naraguta B":"970","Rigiza/Targwong":"384","Sarkin Arab":"467","Tafwa Balewa":"948","Tudun Wada":"726","Vanderpuye":"674"}
 
-Wase = {"Bashar":"742","Gaji":"850","Gudus":"827","Kampani":"879","Nyalun":"283","Yuli":"576""Dabiram":"578","Lamba":"183","Yola-Wakat":"694","Saluwe":"976","Wase-Tofa":"711","Kadarko":"142","Gimbi/Pinau":"263","Mavo":"708","Wadata":"503","Kumbur":"565","Kumbwang":"794","Garkuwa":"400","Kuyambana":"937","Mallam Adama":"764"}
+Wase = {"Bashar":"742","Gaji":"850","Gudus":"827","Kampani":"879","Nyalun":"283","Yuli":"576","Dabiram":"578","Lamba":"183","Yola-Wakat":"694","Saluwe":"976","Wase-Tofa":"711","Kadarko":"142","Gimbi/Pinau":"263","Mavo":"708","Wadata":"503","Kumbur":"565","Kumbwang":"794","Garkuwa":"400","Kuyambana":"937","Mallam Adama":"764"}
 
 
 Jos_East = {"Fursum East":"395","Fadan Fursum":"911","Naton Fusa":"179","Fobur A":"940","Fobur B":"719","Fobur B West":"276","Fobur Central":"284","Fobur East":"566","Federe":"533","Jarawa Kogi A":"510","Jarawa Kogi B":"340","Shere Central":"137","Shere West":"856","Maigemu":"606","Godong":"638","Nakwank":"338","Zandi":"935","Maijuju Doss":"481"}
 
-Mangu = {"Ampang":"641","Bwonpe":"223","Chakfem":"322","Chanso":"365""Gindiri 1":"237",
-"Gindiri 2":"746","Halle":"240","Jipal":"577","Janaret":"526","Kadunun":"916","Kerang":"786","Kasuwan Ali":"652","Kombun ":"441","Langai":"866","Mangu 1":"912","Mangu 2":"955","Mangun":"540","Panyam North":"317","Panyam South":"777","Pushit":"394"}
+Mangu = {"Ampang":"641","Bwonpe":"223","Chakfem":"322","Chanso":"365","Gindiri 1":"237","Gindiri 2":"746","Halle":"240","Jipal":"577","Janaret":"526","Kadunun":"916","Kerang":"786","Kasuwan Ali":"652","Kombun ":"441","Langai":"866","Mangu 1":"912","Mangu 2":"955","Mangun":"540","Panyam North":"317","Panyam South":"777","Pushit":"394"}
 
-Langtang_South = {"Dadinkowa":"842","Fagul":"944","Faya":"736","Jemkur":"501",
-"Magama":"615","Gamakai":"386","Lashel":"834","Timbol":"343","Turaki":"328","Mabudi North":"175","Mabudi South":"282","Nasarawa":"176","Sabongida":"885""Talgwang":"557",
-"Tahbol":"636"}
+Langtang_South = {"Dadinkowa":"842","Fagul":"944","Faya":"736","Jemkur":"501","Magama":"615","Gamakai":"386","Lashel":"834","Timbol":"343","Turaki":"328","Mabudi North":"175","Mabudi South":"282","Nasarawa":"176","Sabongida":"885","Talgwang":"557","Tahbol":"636"}
 
 
 Quaanpan = {"Aningo/Janta":"545","Bwall":"144","Doemak Koplong":"801","Doemak Goechim":"254","Doka East":"212","Doka West":"938","Kurgwi East":"987","Kurgwi West":"739","Kwa":"443","Kwang":"548","Lardang":"952","Kwoor":"635","Kwande":"831","Latok":"586","Langkaku/Kwari":"198","Moeda/Shangfuup":"925","Namu":"224","Njak Shindai":"307","Yitlaar/Tim":"564","Luukwo":"783"}
+
+
+
+LGAs = {"Bassa" : Bassa, "Bokkos": Bokkos, "Jos South" : Jos_South, "Kanam": Kanam, "Langtang North": Langtang_North,"Shendam" : Shendam, "Barkin Ladi" : Barkin_Ladi, "Riyom" : Riyom, "Kanke" : Kanke, "Pankshin": Pankshin, "Mikang": Mikang, "Jos North": Jos_North, "Wase":Wase, "Jos East":Jos_East, "Mangu": Mangu,  "Langtang South":Langtang_South, "Quaanpan":Quaanpan}
